@@ -1,7 +1,7 @@
 /**
  * Scratchie Plugin
  *
- * @version 1.1 (31/05/2010)
+ * @version 1.2 (01/06/2010)
  * @requires jQuery v1.3.2
  * @author Alex Weber <alexweber.com.br>
  * @copyright Copyright (c) 2010, Alex Weber
@@ -13,9 +13,8 @@
  
 /**
  * Scratchie is a fully-customizable scratchcard plugin
- * Define a background image and an overlay image or color and clicking and drag
- * or just drag the mouse over the overlay to reveal the image underneath
- * when the image is fully revealed or enough is
+ * Define a background image and an overlay image or color and clicking and click
+ * or just drag the mouse over the overlay to reveal the target image underneath
  *
  * @example $("#myelement").scratchie();
  *
@@ -33,7 +32,9 @@
  * @param cursorHeight mouse cursor image height (px)
  * @param cursorWidth mouse cursor image width (px)
  * @param target target img element id
- * @param img target img source
+ * @param img target image source
+ * @param imgHeight target image height
+ * @param imgWidth target image width
  * @param title image title/alt attributes
  * @param fillColor scratchcard overlay color
  * @param fillImg scratchcard overlay image
@@ -57,14 +58,16 @@
         	cursor: 'coin.gif', // mouse cursor image
         	cursorHeight: 20, // mouse cursor image height (px)
         	cursorWidth: 20, // mouse cursor image width (px)
-        	target : 'target', // target img element id
-            img : 'prize.jpg', // target img source
+        	target : 'target', // target (prize) img element id
+            img : 'prize.jpg', // target (prize) img source
+            imgHeight : 200, // target (prize) img height
+            imgWidth : 400, // target (prize) img width
             title : 'Are you feeling lucky today?', // image title/alt attributes
             fillColor : '#cc0000', // scratchcard overlay color
             fillImg : 'overlay.jpg', // scratchcard overlay image
             fillX : 20, // width of overlay blocks
             fillY : 20, // height of overlay blocks
-            completion: 60, // completion percentage to trigger callback
+            completion: 70, // completion percentage to trigger callback
             uncoverOnComplete : true, // uncover all elements when completion percentage reached,
             requireMouseClick : true, // require mouse click to start scratching
             callback: function(){ // callback on completion
@@ -87,6 +90,10 @@
 		 
 		// whether mousedown active
 		var mousedown = false;
+		
+		// plugin fully initialized
+		var ready = false;
+		
 		// total number of overlay images and how many uncovered
 		var overlaysTotal = overlaysUncovered = 0;
 		
@@ -129,28 +136,32 @@
          
         this.each(function (){
         	// declare variables
-        	var t, target, tw, th, tp, ov, spritex, spritey;
+        	var t, target, tp, ov, spritex, spritey;
         	
         	// cache selectors
         	t = $(this);
         	target = $('#' + settings.target);
         	
         	// remove cursor from target div & hide target not to ruin surprise
-        	t.css({'cursor' : 'url(blank.cur), none', 'visibility' : 'none'});
+        	t.css({
+        		'cursor' : 'url(blank.cur), none',
+        		'height' : settings.imgHeight + 'px',
+        		'width' : settings.imgWidth + 'px'
+    		});
         	
-        	// display img in target element & disable dragging image
+        	// prepare target element & disable dragging image
 			target.attr({
-				'src' : settings.img,
 				'alt' : settings.title,
 				'title' : settings.title,
 				'zIndex' : 1
+			}).css({
+				'height' : settings.imgHeight + 'px',
+				'width' : settings.imgWidth + 'px',
 			}).bind('mousedown', function(){
 				return false;
 			});
         	
         	// init vars
-        	th = target.height();
-        	tw = target.width();
         	tp = target.position();
         	tt = tp.top;
         	tl = tp.left;
@@ -158,14 +169,13 @@
         	
         	// create cursor div
         	t.after('<div id="cursor" style="cursor:none;width:' + settings.cursorWidth + 'px;height:' + settings.cursorHeight + 
-        	'px;position:absolute;display:none;top:0;left:0;z-index:10000;background:url(' + settings.cursor + ') top\
-        	 left no-repeat;"></div>');
+        	'px;position:absolute;display:none;top:0;left:0;z-index:10000;background:url(' + settings.cursor + ') top left no-repeat;"></div>');
 
         	// generate overlay html
         	ov = '';
-        	for(i=0; i < tw; i += settings.fillX){
+        	for(i=0; i < settings.imgWidth; i += settings.fillX){
         	
-        		for(j = 0; j < th; j += settings.fillY){
+        		for(j = 0; j < settings.imgHeight; j += settings.fillY){
         			++overlaysTotal;
         			ov += '<div class="scratch_overlay" style="z-index:100;height:' + settings.fillY + 'px;width:' + settings.fillX + 'px;\
         			position:absolute;border:0;overflow:hidden;top:' + (tt + j) + 'px;left:' + (tl + i) + 'px;background:';
@@ -188,6 +198,9 @@
         	
         	// apply overlay html
 			t.after(ov);
+			
+        	// finally display target image after overlay set to avoid surprises
+        	target.attr('src', settings.img);
 
         	// remove cursor from overlay
         	$('.scratch_overlay').css('cursor', 'url(blank.cur), none');
@@ -216,7 +229,10 @@
 					mousedown = true;
 					// fix to recognize mouseup event after moving mouse
 					mouseUpAfterDrag();
-					$(this).remove();
+					if(ready === true){
+						++overlaysUncovered;
+						$(this).remove();
+					}
 					return false;
 				});
 			}
@@ -225,8 +241,10 @@
 			$('.scratch_overlay').bind('mouseover', function(){
 				if(mousedown === true || settings.requireMouseClick === false){
 					// remove elements when dragging with mousedown
-					++overlaysUncovered;
-					$(this).remove();
+					if(ready === true){
+						++overlaysUncovered;
+						$(this).remove();
+					}
 					// check if complete & fire callback
 					if((overlaysUncovered / overlaysTotal) * 100 >= settings.completion){
 						if(settings.uncoverOnComplete === true){
@@ -237,8 +255,8 @@
 				}
 			});
 			
-			// when we're done with everything, reveal the target
-			//target.css('visibility', 'visible');
+			// when we're done with everything, make the plugin ready
+			ready = true;
         });
     // keep the chaining dream alive
     return this;
