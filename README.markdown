@@ -10,6 +10,6 @@ Define a background image and an overlay image or color and clicking and click o
 
 ## License
 
-Litebox is Distributed under the terms of new [BSD License](http://www.opensource.org/licenses/bsd-license.php).
+Scratchie is Distributed under the terms of new [BSD License](http://www.opensource.org/licenses/bsd-license.php).
 
 Copyright (c) 2010 [Alex Weber](http://www.alexweber.com.br)
