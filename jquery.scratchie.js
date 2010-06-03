@@ -1,7 +1,7 @@
 /**
  * Scratchie Plugin
  *
- * @version 1.2 (01/06/2010)
+ * @version 1.2 (02/06/2010)
  * @requires jQuery v1.3.2
  * @author Alex Weber <alexweber.com.br>
  * @copyright Copyright (c) 2010, Alex Weber
@@ -115,7 +115,7 @@
 		var mouseMove = function(e){
 			// if the image is right on top of the cursor it starts blinking
 			//$('#cursor').css({'left' : e.clientX - 2, 'top' : e.clientY - 10});
-			$('#cursor').css({'left' : e.clientX - 2, 'top' : e.clientY + 1});
+			$('#cursor').css({'left' : e.clientX - 2, 'top' : e.clientY + 2});
 		}
 		
 		// show coin cursor on enter
@@ -128,7 +128,7 @@
 		var mouseOut = function(){
 			$('#cursor').hide();
 			return false;
-		}	
+		}
 
         /*
          * Main plugin loop
@@ -168,8 +168,7 @@
         	spritex = spritey = 0;
         	
         	// create cursor div
-        	t.after('<div id="cursor" style="cursor:none;width:' + settings.cursorWidth + 'px;height:' + settings.cursorHeight + 
-        	'px;position:absolute;display:none;top:0;left:0;z-index:10000;background:url(' + settings.cursor + ') top left no-repeat;"></div>');
+        	t.after('<div id="cursor" style="cursor:none;width:' + settings.cursorWidth + 'px;height:' + settings.cursorHeight + 'px;position:fixed;display:none;top:0;left:0;z-index:10000;background:url(' + settings.cursor + ') top left no-repeat;"></div>');
 
         	// generate overlay html
         	ov = '';
@@ -177,9 +176,8 @@
         	
         		for(j = 0; j < settings.imgHeight; j += settings.fillY){
         			++overlaysTotal;
-        			ov += '<div class="scratch_overlay" style="z-index:100;height:' + settings.fillY + 'px;width:' + settings.fillX + 'px;\
-        			position:absolute;border:0;overflow:hidden;top:' + (tt + j) + 'px;left:' + (tl + i) + 'px;background:';
-        			
+        			ov += '<div class="scratch_overlay" style="z-index:100;height:' + settings.fillY + 'px;width:' + settings.fillX + 'px;position:absolute;border:0;overflow:hidden;top:' + (tt + j) + 'px;left:' + (tl + i) + 'px;background:';
+
         			if(settings.fillImg){
         				ov += ' transparent url(' + settings.fillImg + ') -' + spritex + 'px -' + spritey + 'px no-repeat;';
 	        			spritey += settings.fillY;
@@ -245,11 +243,13 @@
 						++overlaysUncovered;
 						$(this).remove();
 					}
+					
 					// check if complete & fire callback
 					if((overlaysUncovered / overlaysTotal) * 100 >= settings.completion){
 						if(settings.uncoverOnComplete === true){
 							$('.scratch_overlay').remove();
 						}
+						
 						settings.callback();
 					}
 				}
