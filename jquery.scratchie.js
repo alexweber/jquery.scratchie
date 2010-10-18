@@ -1,8 +1,8 @@
 /**
  * Scratchie Plugin
  *
- * @version 1.2 (02/06/2010)
- * @requires jQuery v1.3.2
+ * @version 1.2.1 (18/10/2010)
+ * @requires jQuery v1.3.2+
  * @author Alex Weber <alexweber.com.br>
  * @copyright Copyright (c) 2010, Alex Weber
  * @license http://www.opensource.org/licenses/bsd-license.php
@@ -156,7 +156,7 @@
 				'zIndex' : 1
 			}).css({
 				'height' : settings.imgHeight + 'px',
-				'width' : settings.imgWidth + 'px',
+				'width' : settings.imgWidth + 'px'
 			}).bind('mousedown', function(){
 				return false;
 			});
