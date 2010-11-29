@@ -4,8 +4,8 @@ Scratchie is a fully-customizable scratchcard plugin
 
 Define a background image and an overlay image or color and clicking and click or just drag the mouse over the overlay to reveal the target image underneath!
 
-* Requires jQuery 1.3.2
-* Docs: [http://www.alexweber.com.br/jquery/scratchie](http://www.alexweber.com.br/jquery/scratchie)
+* Requires jQuery 1.3.2+
+* Docs: [http://code.alexweber.com.br/jquery/scratchie](http://code.alexweber.com.br/jquery/scratchie)
 
 
 ## License
